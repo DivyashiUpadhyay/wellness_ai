@@ -1,0 +1,423 @@
+/* =========================================
+GLOBAL SETTINGS
+========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+}
+
+img{
+  display:block;
+  max-width:100%;
+}
+
+:root {
+  --bg-main: #0b0b0b;
+  --bg-card: #151515;
+  --bg-soft: #1e1e1e;
+  --border-soft: #2a2a2a;
+  --text-main: #ffffff;
+  --text-muted: #9ca3af;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-main);
+
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* =========================================
+LAYOUT
+========================================= */
+
+.home-page{
+  position: relative;
+  min-height:100vh;
+}
+
+.main-container {
+  max-width: 1300px;
+  margin: auto;
+  padding: 60px 30px;
+  animation: fadeIn 1s ease;
+}
+
+/* =========================================
+NAVBAR
+========================================= */
+
+.navbar{
+  width:100%;
+  position:sticky;
+  top:0;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:20px 60px;
+
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(10px);
+
+  border-bottom:1px solid rgba(255,255,255,0.05);
+
+  z-index:100;
+}
+
+.nav-logo{
+  font-size:1.5rem;
+  font-weight:700;
+  color:var(--text-main);
+}
+
+.nav-login{
+  padding:10px 22px;
+  border-radius:8px;
+  border:1px solid white;
+  background:transparent;
+  color:white;
+  cursor:pointer;
+  transition:0.25s ease;
+}
+
+.nav-login:hover{
+  background:white;
+  color:black;
+}
+
+.nav-login:active{
+  transform:scale(0.96);
+}
+
+/* =========================================
+HEADERS
+========================================= */
+
+.header-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.main-heading {
+  font-size: 4.5rem;
+  font-weight: 900;
+  letter-spacing: -2px;
+  margin-bottom: 10px;
+
+  background: linear-gradient(90deg, #ffffff, #cfcfcf, #ffffff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  text-shadow:
+    0 0 12px rgba(255,255,255,0.25),
+    0 0 25px rgba(255,255,255,0.15);
+}
+
+.main-heading1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #d1d5db;
+  margin-bottom: 35px;
+
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.15),
+    0 0 16px rgba(255, 255, 255, 0.08);
+}
+
+.hero-subtext{
+  color:#cfcfcf;
+  max-width:650px;
+  margin:auto;
+  margin-top:10px;
+  font-size:1rem;
+  line-height:1.6;
+}
+
+/* =========================================
+HERO LOGO
+========================================= */
+
+.hero-logo-container {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 50px 0;
+}
+
+.hero-logo {
+  width: 100%;
+  max-width: 950px;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid var(--border-soft);
+
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.08),
+    0 0 60px rgba(255, 255, 255, 0.05);
+
+  transition: transform 0.35s ease;
+}
+
+.hero-logo:hover {
+  transform: scale(1.02);
+}
+
+/* =========================================
+TEAM SECTION
+========================================= */
+
+.team-visuals {
+  margin-top: 30px;
+}
+
+.team-row {
+  display: flex;
+  justify-content: center;
+  gap: 70px;
+  margin-bottom: 45px;
+  flex-wrap:wrap;
+}
+
+.member-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #222;
+  transition: transform 0.35s ease;
+  position: relative;
+
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.member-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member-circle:hover {
+  transform: translateY(-10px) scale(1.1);
+  border: 3px solid white;
+
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.25),
+    0 0 50px rgba(255, 255, 255, 0.15);
+}
+
+.member-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-weight: 700;
+  text-align: center;
+
+  padding: 6px;
+  font-size: 0.9rem;
+
+  opacity: 0;
+  transition: 0.25s ease;
+}
+
+.member-circle:hover .member-name {
+  opacity: 1;
+}
+
+/* =========================================
+TEAM CARDS
+========================================= */
+
+.info-section {
+  margin-top: 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.member-card {
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(10px);
+  padding: 30px 40px;
+  border-radius: 14px;
+  border: 1px solid var(--border-soft);
+
+  transition: transform 0.3s ease;
+}
+
+.member-card:hover {
+  transform: translateY(-6px);
+
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.08),
+    0 0 40px rgba(255, 255, 255, 0.05);
+
+  background: rgba(30, 30, 30, 0.9);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.member-card h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: white;
+
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+.member-role {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.member-desc {
+  font-size: 0.95rem;
+  color: #cfcfcf;
+  line-height: 1.7;
+}
+
+/* =========================================
+WORKFLOW
+========================================= */
+
+.problem-section {
+  margin-top: 120px;
+  text-align: center;
+}
+
+.problem-heading {
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 50px;
+}
+
+.workflow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.workflow-box {
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid var(--border-soft);
+  padding: 20px 40px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  width: 350px;
+
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+.arrow {
+  font-size: 30px;
+  color: white;
+}
+
+/* =========================================
+BUTTON
+========================================= */
+
+.about-btn {
+  margin-top: 70px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 15px 42px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid white;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition:0.25s ease;
+}
+
+.about-btn:hover {
+  background: white;
+  color: black;
+
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.3),
+    0 0 40px rgba(255, 255, 255, 0.2);
+}
+
+.about-btn:active{
+  transform:scale(0.96);
+}
+
+/* =========================================
+FOOTER
+========================================= */
+
+footer {
+  margin-top: 90px;
+  text-align: center;
+}
+
+.footer-text {
+  color: #6b7280;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+/* =========================================
+ANIMATION
+========================================= */
+
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* =========================================
+RESPONSIVE
+========================================= */
+
+@media (max-width:768px){
+
+  .navbar{
+    padding:15px 25px;
+  }
+
+  .main-heading{
+    font-size:3rem;
+  }
+
+  .team-row{
+    gap:30px;
+  }
+
+}
