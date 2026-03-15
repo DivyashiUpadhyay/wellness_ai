@@ -2,15 +2,28 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
 
-  const navigate = useNavigate();   // ✅ THIS LINE FIXES THE ERROR
+  const navigate = useNavigate();
+
+  const generateAnonID = () => {
+    return "emp_" + Math.random().toString(36).substring(2,10);
+  };
 
   const goToEmployee = () => {
-    localStorage.setItem("role", "employee");
+
+    let anonID = localStorage.getItem("anon_id");
+
+    if(!anonID){
+      anonID = generateAnonID();
+      localStorage.setItem("anon_id", anonID);
+    }
+
+    localStorage.setItem("role","employee");
+
     navigate("/employee/chat");
   };
 
   const goToAdmin = () => {
-    localStorage.setItem("role", "admin");
+    localStorage.setItem("role","admin");
     navigate("/admin/dashboard");
   };
 
@@ -70,13 +83,12 @@ function Login() {
       </div>
 
       <p style={{marginTop:"40px", fontSize:"13px", opacity:0.7}}>
-        🔒 Employee chats remain private. HR only sees anonymized risk metrics.
+        🔒 Employees interact anonymously. AI detects wellness risk patterns without exposing identity.
       </p>
 
     </div>
 
   );
-
 }
 
 export default Login;

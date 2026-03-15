@@ -2,14 +2,86 @@ import { useState, useRef, useEffect } from "react";
 import { FaUser, FaRobot } from "react-icons/fa";
 import { FiSend } from "react-icons/fi";
 import Sidebar from "../../components/Sidebar";
+import SessionSidebar from "../../components/SessionSidebar";
 
 function Chat() {
 
   const [message, setMessage] = useState("");
-  const [chat, setChat] = useState([]);
+const [sessionId, setSessionId] = useState(() => {
+  let id = localStorage.getItem("current_session");
+
+  if (!id) {
+    id = "session-" + Date.now();
+    localStorage.setItem("current_session", id);
+
+    const sessions = JSON.parse(localStorage.getItem("sessions")) || [];
+    sessions.push(id);
+    localStorage.setItem("sessions", JSON.stringify(sessions));
+  }
+
+  return id;
+});
+
+const [chat, setChat] = useState([]);
+
+useEffect(() => {
+  const saved = localStorage.getItem(sessionId);
+  setChat(saved ? JSON.parse(saved) : []);
+}, [sessionId]);
+
   const [isTyping, setIsTyping] = useState(false);
 
   const chatEndRef = useRef(null);
+
+
+ const loadSession = (id) => {
+
+  localStorage.setItem("current_session", id);
+
+  setSessionId(id);
+
+};
+  // Get anonymous employee ID
+  const anonID = localStorage.getItem("anon_id");
+
+  /* ===============================
+     LOAD PREVIOUS CHAT HISTORY
+  =============================== */
+
+  useEffect(() => {
+
+    const fetchHistory = async () => {
+
+      try {
+
+        const response = await fetch(`http://localhost:5000/api/history/${anonID}`);
+        const data = await response.json();
+
+        if(data.history){
+          setChat(data.history);
+        }
+
+      } catch(error){
+        console.error("History fetch error:", error);
+      }
+
+    };
+
+    if(anonID){
+      fetchHistory();
+    }
+
+  }, [anonID]);
+
+  useEffect(() => {
+  if(sessionId){
+    localStorage.setItem(sessionId, JSON.stringify(chat));
+  }
+}, [chat, sessionId]);
+
+  /* ===============================
+     SEND MESSAGE
+  =============================== */
 
   const sendMessage = async () => {
 
@@ -34,7 +106,9 @@ function Chat() {
           "Content-Type":"application/json"
         },
         body: JSON.stringify({
-          message: userMessage
+          message: userMessage,
+          anon_id: anonID,
+          timestamp: Date.now()
         })
       });
 
@@ -62,19 +136,30 @@ function Chat() {
 
   };
 
+
+  /* ===============================
+     SUGGESTION BUTTONS
+  =============================== */
+
   const sendSuggestion = (text) => {
     setMessage(text);
   };
+
+
+  /* ===============================
+     AUTO SCROLL CHAT
+  =============================== */
 
   useEffect(()=>{
     chatEndRef.current?.scrollIntoView({behavior:"smooth"});
   },[chat,isTyping]);
 
+
   return (
 
     <div style={{display:"flex"}}>
 
-      <Sidebar />
+<SessionSidebar loadSession={loadSession} />
 
       <div style={{
         flex:1,
@@ -98,6 +183,48 @@ function Chat() {
 
           <h2 style={{ color: "black" }}>Wellness AI Assistant</h2>
 
+<button
+  onClick={()=>{
+    const newSession = "session-" + Date.now();
+
+    localStorage.setItem("current_session", newSession);
+
+    setChat([]);
+
+    window.location.reload();
+  }}
+  style={{
+    padding:"6px 12px",
+    background:"#1976d2",
+    border:"none",
+    borderRadius:"6px",
+    color:"white",
+    cursor:"pointer"
+  }}
+>
+New Chat
+</button>
+
+
+  <button
+  onClick={()=>{
+    localStorage.removeItem("chat_history");
+    setChat([]);
+  }}
+  style={{
+    padding:"6px 12px",
+    background:"#e53935",
+    border:"none",
+    borderRadius:"6px",
+    color:"white",
+    cursor:"pointer"
+  }}
+>
+Clear Session
+</button>
+<div style={{fontSize:"12px", color:"#444"}}>
+Session ID: {sessionId}
+</div>
         </div>
 
         {/* CHAT AREA */}
@@ -151,7 +278,7 @@ function Chat() {
 
           })}
 
-          {/* AI typing */}
+          {/* AI typing indicator */}
 
           {isTyping && (
 

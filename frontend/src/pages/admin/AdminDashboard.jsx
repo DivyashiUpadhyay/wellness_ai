@@ -1,4 +1,5 @@
 import Sidebar from "../../components/Sidebar";
+import { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -13,134 +14,165 @@ import {
 
 function AdminDashboard() {
 
-  // Fake data for demo
-  const stressTrend = [
-    { day: "Mon", stress: 40 },
-    { day: "Tue", stress: 45 },
-    { day: "Wed", stress: 60 },
-    { day: "Thu", stress: 55 },
-    { day: "Fri", stress: 70 }
-  ];
+  const [avgStress, setAvgStress] = useState(0);
+  const [riskData, setRiskData] = useState([]);
+  const [stressTrend, setStressTrend] = useState([]);
 
-  const riskDistribution = [
-    { level: "Low", employees: 8 },
-    { level: "Medium", employees: 5 },
-    { level: "High", employees: 2 }
-  ];
+  const [highRiskEmployees, setHighRiskEmployees] = useState(0);
+  const [alertsToday, setAlertsToday] = useState(0);
+
+  useEffect(() => {
+
+    const fetchAnalytics = async () => {
+
+      const res = await fetch("http://localhost:5000/api/admin/analytics");
+      const data = await res.json();
+
+      setAvgStress(data.avgStress);
+
+      setRiskData([
+        { level: "Low", employees: data.riskDistribution.low },
+        { level: "Medium", employees: data.riskDistribution.medium },
+        { level: "High", employees: data.riskDistribution.high }
+      ]);
+
+      setHighRiskEmployees(data.riskDistribution.high);
+
+      setAlertsToday(Math.floor(data.riskDistribution.high / 2));
+
+      setStressTrend([
+        { day: "Mon", stress: data.avgStress - 5 },
+        { day: "Tue", stress: data.avgStress - 2 },
+        { day: "Wed", stress: data.avgStress + 3 },
+        { day: "Thu", stress: data.avgStress },
+        { day: "Fri", stress: data.avgStress + 5 }
+      ]);
+
+    };
+
+    fetchAnalytics();
+
+  }, []);
 
   return (
 
-      <div style={{display:"flex"}}>
+    <div style={{display:"flex"}}>
 
-    <Sidebar />
-
-    <div style={{flex:1, padding:"30px", fontFamily:"Arial", backgroundColor:"#c5c9dc"}}>
-      <h1>Admin Monitoring Dashboard</h1>
-      <p>Privacy-preserving employee wellness monitoring</p>
-      <hr />
-      {/* Risk Score Cards */}
+      <Sidebar />
 
       <div style={{
-        display:"flex",
-        gap:"20px",
-        marginTop:"30px",
-        marginBottom:"30px"
+        flex:1,
+        padding:"30px",
+        fontFamily:"Arial",
+        backgroundColor:"#c5c9dc"
       }}>
 
-        <div style={{
-          padding:"20px",
-          background:"#f5f5f5",
-          borderRadius:"10px",
-          width:"200px"
-        }}>
-          <h3>Avg Stress Score</h3>
-          <h2>62%</h2>
-        </div>
+        <h1>Admin Monitoring Dashboard</h1>
+        <p>Privacy-preserving employee wellness monitoring</p>
+        <hr />
+
+        {/* Cards */}
 
         <div style={{
-          padding:"20px",
-          background:"#f5f5f5",
-          borderRadius:"10px",
-          width:"200px"
+          display:"flex",
+          gap:"20px",
+          marginTop:"30px",
+          marginBottom:"30px"
         }}>
-          <h3>High Risk Employees</h3>
-          <h2>2</h2>
+
+          <div style={{
+            padding:"20px",
+            background:"#f5f5f5",
+            borderRadius:"10px",
+            width:"200px"
+          }}>
+            <h3>Avg Stress Score</h3>
+            <h2>{avgStress}%</h2>
+          </div>
+
+          <div style={{
+            padding:"20px",
+            background:"#f5f5f5",
+            borderRadius:"10px",
+            width:"200px"
+          }}>
+            <h3>High Risk Employees</h3>
+            <h2>{highRiskEmployees}</h2>
+          </div>
+
+          <div style={{
+            padding:"20px",
+            background:"#f5f5f5",
+            borderRadius:"10px",
+            width:"200px"
+          }}>
+            <h3>Alerts Today</h3>
+            <h2>{alertsToday}</h2>
+          </div>
+
         </div>
 
-        <div style={{
-          padding:"20px",
-          background:"#f5f5f5",
-          borderRadius:"10px",
-          width:"200px"
-        }}>
-          <h3>Alerts Today</h3>
-          <h2>3</h2>
+        <hr />
+
+        {/* Stress Trend */}
+
+        <div style={{marginTop:"20px", marginBottom:"20px"}}>
+
+          <h2>Stress Trend (Weekly)</h2>
+
+          <ResponsiveContainer width="100%" height={300}>
+
+            <LineChart data={stressTrend}>
+
+              <CartesianGrid strokeDasharray="3 3"/>
+              <XAxis dataKey="day"/>
+              <YAxis/>
+              <Tooltip/>
+
+              <Line
+                type="monotone"
+                dataKey="stress"
+                stroke="#4CAF50"
+                strokeWidth={3}
+              />
+
+            </LineChart>
+
+          </ResponsiveContainer>
+
         </div>
 
-      </div>
-     <hr />
-      {/* Stress Trend Chart */}
+        <hr />
 
-      <div style={{marginTop:"20px", marginBottom:"20px"}}>
+        {/* Risk Distribution */}
 
-        <h2>Stress Trend (Weekly)</h2>
+        <div style={{marginTop:"20px", marginBottom:"20px"}}>
 
-        <ResponsiveContainer width="100%" height={300}>
+          <h2>Employee Risk Distribution</h2>
 
-          <LineChart data={stressTrend}>
+          <ResponsiveContainer width="100%" height={300}>
 
-            <CartesianGrid strokeDasharray="3 3" />
+            <BarChart data={riskData}>
 
-            <XAxis dataKey="day" />
+              <CartesianGrid strokeDasharray="3 3"/>
+              <XAxis dataKey="level"/>
+              <YAxis/>
+              <Tooltip/>
 
-            <YAxis />
+              <Bar
+                dataKey="employees"
+                fill="#1e88e5"
+              />
 
-            <Tooltip />
+            </BarChart>
 
-            <Line
-              type="monotone"
-              dataKey="stress"
-              stroke="#4CAF50"
-              strokeWidth={3}
-            />
+          </ResponsiveContainer>
 
-          </LineChart>
-
-        </ResponsiveContainer>
-
-      </div>
-   <hr />
-      {/* Risk Distribution */}
-
-      <div style={{marginTop:"20px", marginBottom:"20px"}}>
-
-        <h2>Employee Risk Distribution</h2>
-
-        <ResponsiveContainer width="100%" height={300}>
-
-          <BarChart data={riskDistribution}>
-
-            <CartesianGrid strokeDasharray="3 3" />
-
-            <XAxis dataKey="level" />
-
-            <YAxis />
-
-            <Tooltip />
-
-            <Bar
-              dataKey="employees"
-              fill="#1e88e5"
-            />
-
-          </BarChart>
-
-        </ResponsiveContainer>
+        </div>
 
       </div>
 
     </div>
-  </div>
 
   );
 
